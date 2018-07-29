@@ -1,9 +1,5 @@
 FROM ubuntu:18.04
 
-ENV FOLLY_TAG v2018.06.18.00
-ENV WANGLE_TAG v2018.06.04.00
-ENV FBTHRIFT_TAG v2018.06.18.00
-
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y \
   autoconf \
@@ -35,25 +31,32 @@ RUN apt-get install -y \
   python3-six \
   zlib1g-dev
 
+ENV FOLLY_TAG v2018.07.23.00
 RUN cd /root && \
-  git clone --branch $FOLLY_TAG https://github.com/facebook/folly.git && \
-  git clone --branch $WANGLE_TAG https://github.com/facebook/wangle.git && \
-  git clone --branch $FBTHRIFT_TAG https://github.com/facebook/fbthrift.git
+  git clone --branch $FOLLY_TAG https://github.com/facebook/folly.git
 
 RUN cd /root/folly && \
   mkdir _build && cd _build && \
-  cmake configure ..  && \
+  cmake configure ..  -DBUILD_TESTS=OFF && \
   make -j $(nproc) && \
   make install
 
+ENV WANGLE_TAG v2018.07.23.00
+RUN cd /root && \
+  git clone --branch $WANGLE_TAG https://github.com/facebook/wangle.git
+
 RUN cd /root/wangle/wangle && \
-  cmake . && \
+  cmake . -DBUILD_TESTS=OFF && \
   make -j $(nproc) && \
   make install
+
+ENV FBTHRIFT_TAG v2018.07.23.00
+RUN cd /root && \
+  git clone --branch $FBTHRIFT_TAG https://github.com/facebook/fbthrift.git
 
 RUN cd /root/fbthrift && \
   cd build && \
-  cmake ..  && \
+  cmake .. && \
   make -j $(nproc) && \
   make install
 

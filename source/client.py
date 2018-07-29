@@ -5,11 +5,10 @@ import os
 import sys
 import ssl
 
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gen-py"))
+
 from thrift.server.TAsyncioServer import ThriftClientProtocolFactory
 
-sys.path.append(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "gen-py")
-)
 from mytest import TestService
 
 
